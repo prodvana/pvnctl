@@ -1,5 +1,11 @@
 name: Build and Push Docker Image
 
+on:
+  merge_group:
+  pull_request:
+  push:
+    branches: [main]
+
 env:
   PUBLIC_REGISTRY: us-docker.pkg.dev/pvn-infra/pvn-public
   VERSION: '0.6.1'
