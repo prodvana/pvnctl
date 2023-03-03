@@ -1,6 +1,5 @@
 FROM debian:bullseye-slim AS builder
 
-# trunk-ignore(hadolint/DL3008): these tools are just helper tools
 RUN apt-get update -y && apt-get install -y --no-install-recommends jq curl ca-certificates
 
 ARG VERSION=latest
