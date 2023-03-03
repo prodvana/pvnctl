@@ -1,0 +1,49 @@
+name: Build and Push Docker Image
+
+env:
+  PUBLIC_REGISTRY: us-docker.pkg.dev/pvn-infra/pvn-public
+  VERSION: '0.6.1'
+
+jobs:
+  build-prod-images:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: setup docker context for buildx
+        id: buildx-context
+        run: |
+          docker context create builders
+      - name: setup docker buildx
+        uses: docker/setup-buildx-action@v2
+        with:
+          endpoint: builders
+          driver-opts: |
+            image=moby/buildkit:v0.10.6
+      - id: auth
+        name: "Authenticate to Google Cloud"
+        if: ${{ inputs.push }}
+        uses: "google-github-actions/auth@v0"
+        with:
+          workload_identity_provider: "projects/868387978158/locations/global/workloadIdentityPools/pvn-infra/providers/github"
+          service_account: "docker-write@pvn-infra.iam.gserviceaccount.com"
+          token_format: "access_token"
+          create_credentials_file: true
+      - uses: "docker/login-action@v1"
+        if: ${{ inputs.push }}
+        with:
+          registry: "us-docker.pkg.dev"
+          username: "oauth2accesstoken"
+          password: "${{ steps.auth.outputs.access_token }}"
+      - name: Build and push image
+        uses: docker/build-push-action@v2
+        with:
+          push: ${{ inputs.push }}
+          platforms: linux/arm64/v8,linux/amd64
+          target: pvnctl
+          push: true
+          context: .
+          build-args: |
+            VERSION=${{ env.VERSION }}
+          tags: |
+            ${{ env.PUBLIC_REGISTRY }}/pvnctl:latest
+            ${{ env.PUBLIC_REGISTRY }}/pvnctl:${{ env.VERSION }}
