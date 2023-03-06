@@ -27,7 +27,7 @@ jobs:
         uses: "google-github-actions/auth@v0"
         with:
           workload_identity_provider: "projects/868387978158/locations/global/workloadIdentityPools/pvn-infra/providers/github"
-          service_account: "docker-write@pvn-infra.iam.gserviceaccount.com"
+          service_account: "public-docker-write@pvn-infra.iam.gserviceaccount.com"
           token_format: "access_token"
           create_credentials_file: true
       - uses: "docker/login-action@v1"
