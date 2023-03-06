@@ -6,6 +6,10 @@ on:
   push:
     branches: [main]
 
+permissions:
+  id-token: write
+  contents: read
+
 env:
   PUBLIC_REGISTRY: us-docker.pkg.dev/pvn-infra/pvn-public
   VERSION: '0.6.1'
