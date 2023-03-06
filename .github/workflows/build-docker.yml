@@ -1,8 +1,6 @@
 name: Build and Push Docker Image
 
 on:
-  merge_group:
-  pull_request:
   push:
     branches: [main]
 
